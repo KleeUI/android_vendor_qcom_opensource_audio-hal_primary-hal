@@ -159,8 +159,8 @@ PRODUCT_PACKAGES += ftm_test_config_diwali-idp-sku1-snd-card
 PRODUCT_PACKAGES += ftm_test_config_diwali-qrd-sku1-snd-card
 PRODUCT_PACKAGES += audioadsprpcd
 PRODUCT_PACKAGES += vendor.qti.audio-adsprpc-service.rc
-PRODUCT_PACKAGES += android.hardware.audio.service_64
-PRODUCT_PACKAGES += android.hardware.audio.service_64.rc
+$(call soong_config_set,android_hardware_audio,run_64bit,true)
+PRODUCT_PACKAGES += android.hardware.audio.service
 PRODUCT_PACKAGES += MTP_acdb_cal.acdb
 PRODUCT_PACKAGES += MTP_workspaceFileXml.qwsp
 PRODUCT_PACKAGES += CDP_acdb_cal.acdb
