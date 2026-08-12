@@ -15,7 +15,13 @@
 namespace aidl::qti::effects {
 
 GlobalConfigs::GlobalConfigs() {
-    initGainMappings();
+    // The effect factory loads every library while enumerating descriptors.
+    // Initializing PAL here blocks that HIDL request until the sound card is
+    // ready, which in turn prevents AudioFlinger from publishing its service.
+    // Keep the built-in calibration table during early boot; PAL-dependent
+    // operations remain in the active volume-listener session path.
+    LOG(DEBUG) << "Using default volume table during effect discovery";
+    printVolumeTable();
     mHeadsetCalEnabled = property_get_bool("vendor.audio.volume.headset.gain.depcal", false);
 }
 
