@@ -111,6 +111,7 @@ AUDIO_PAL += vendor.qti.hardware.pal@1.0-impl
 
 #PAL Module
 AUDIO_PAL := libar-pal
+AUDIO_PAL += libar-gsl
 AUDIO_PAL += lib_bt_bundle
 AUDIO_PAL += lib_bt_aptx
 AUDIO_PAL += lib_bt_ble
