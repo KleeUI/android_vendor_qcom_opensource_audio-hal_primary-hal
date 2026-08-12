@@ -29,12 +29,13 @@ class GlobalConfigs {
     GlobalConfigs();
     int getVolumeCalSteps() { return mTotalVolumeCalSteps; }
     bool isHeadsetCalEnabled() { return mHeadsetCalEnabled; }
+    bool isInitialized() { return mInitialized; }
     struct pal_amp_db_and_gain_table* getGainTable() {
         return mGainMappingTable;
     }
+    void initGainMappings();
 
   private:
-    void initGainMappings();
     void printVolumeTable();
     struct pal_amp_db_and_gain_table mGainMappingTable[MAX_VOLUME_CAL_STEPS] = {
             /* Level 0 in the calibration database contains default calibration */
@@ -46,6 +47,7 @@ class GlobalConfigs {
 
     int mTotalVolumeCalSteps = MAX_GAIN_LEVELS;
     bool mHeadsetCalEnabled = false;
+    bool mInitialized = false;
 };
 
 class GlobalVolumeListenerSession {

@@ -15,13 +15,6 @@
 namespace aidl::qti::effects {
 
 GlobalConfigs::GlobalConfigs() {
-    // The effect factory loads every library while enumerating descriptors.
-    // Initializing PAL here blocks that HIDL request until the sound card is
-    // ready, which in turn prevents AudioFlinger from publishing its service.
-    // Keep the built-in calibration table during early boot; PAL-dependent
-    // operations remain in the active volume-listener session path.
-    LOG(DEBUG) << "Using default volume table during effect discovery";
-    printVolumeTable();
     mHeadsetCalEnabled = property_get_bool("vendor.audio.volume.headset.gain.depcal", false);
 }
 
@@ -58,6 +51,7 @@ void GlobalConfigs::initGainMappings() {
         LOG(DEBUG) << "Using default volume table";
     }
     printVolumeTable();
+    mInitialized = true;
 }
 
 void GlobalConfigs::printVolumeTable() {
@@ -69,8 +63,8 @@ void GlobalConfigs::printVolumeTable() {
 
 GlobalVolumeListenerSession::GlobalVolumeListenerSession() {
     LOG(VERBOSE) << __func__ << "Global Session created";
-    mTotalVolumeSteps = mConfig.getVolumeCalSteps();
-    mGainTable = mConfig.getGainTable();
+    mTotalVolumeSteps = 0;
+    mGainTable = nullptr;
 }
 
 std::shared_ptr<VolumeListenerContext> GlobalVolumeListenerSession::createSession(
@@ -78,6 +72,16 @@ std::shared_ptr<VolumeListenerContext> GlobalVolumeListenerSession::createSessio
     int sessionId = common.session;
     LOG(VERBOSE) << __func__ << type << " with sessionId " << sessionId;
     std::lock_guard lg(mSessionMutex);
+
+    // PAL must not be queried while the effect library is being dlopen()'d.
+    // The linker lock is held during descriptor discovery, and PAL may wait
+    // for the audio resource manager, forming a three-way deadlock.  Delay
+    // the query until the first real effect session is created.
+    if (!mConfig.isInitialized()) {
+        mConfig.initGainMappings();
+        mTotalVolumeSteps = mConfig.getVolumeCalSteps();
+        mGainTable = mConfig.getGainTable();
+    }
 
     auto context = std::make_shared<VolumeListenerContext>(common, type, processData);
     RETURN_VALUE_IF(!context, nullptr, "failedToCreateContext");
