@@ -349,7 +349,7 @@ void ModulePrimary::setAudioPatchTelephony(const std::vector<AudioPortConfig*>& 
     const auto& portConfigsForDeviceChange = updateRx ? (sinks) : (sources);
 
     std::vector<AudioDevice> devices;
-    for (const auto portConfig : portConfigsForDeviceChange) {
+    for (const auto& portConfig : portConfigsForDeviceChange) {
         devices.push_back(portConfig->ext.get<AudioPortExt::Tag::device>().device);
     }
 

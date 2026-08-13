@@ -220,7 +220,7 @@ static void fillProfile(AudioProfile* profile, const std::string& name,
                         const std::vector<int64_t>& sampleRates,
                         AudioEncapsulationType encapsulationType) {
     profile->name = name;
-    for (auto layout : channelLayouts) {
+    for (const auto& layout : channelLayouts) {
         profile->channelMasks.push_back(
                 AudioChannelLayout::make<AudioChannelLayout::layoutMask>(layout));
     }

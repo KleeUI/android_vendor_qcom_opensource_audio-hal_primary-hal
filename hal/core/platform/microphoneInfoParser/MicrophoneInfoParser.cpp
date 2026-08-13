@@ -171,7 +171,7 @@ void MicrophoneInfoParser::populateMicrophoneDynamicInfo(
             }
             info.id = micInfo.getId();
             if (micInfo.hasChannelMapping()) {
-                for (const auto channel : micInfo.getChannelMapping()) {
+                for (const auto& channel : micInfo.getChannelMapping()) {
                     info.channelMapping.push_back(XsdToChannelMap.at(channel));
                 }
             }
