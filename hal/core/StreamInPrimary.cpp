@@ -12,6 +12,7 @@
 #include <android-base/logging.h>
 #include <audio_utils/clock.h>
 #include <hardware/audio.h>
+#include <effect-impl/EffectUuidV2Compat.h>
 #include <qti-audio-core/Module.h>
 #include <qti-audio-core/ModulePrimary.h>
 #include <qti-audio-core/StreamInPrimary.h>
@@ -33,8 +34,8 @@ using ::aidl::android::hardware::audio::core::IStreamCallback;
 using ::aidl::android::hardware::audio::core::IStreamCommon;
 using ::aidl::android::hardware::audio::core::StreamDescriptor;
 using ::aidl::android::hardware::audio::core::VendorParameter;
-using ::aidl::android::hardware::audio::effect::getEffectTypeUuidAcousticEchoCanceler;
-using ::aidl::android::hardware::audio::effect::getEffectTypeUuidNoiseSuppression;
+using ::aidl::qti::effects::v2::getEffectTypeUuidAcousticEchoCanceler;
+using ::aidl::qti::effects::v2::getEffectTypeUuidNoiseSuppression;
 using ::aidl::android::media::audio::common::AudioDeviceType;
 using ::aidl::android::media::audio::common::AudioDeviceDescription;
 

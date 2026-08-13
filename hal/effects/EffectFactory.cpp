@@ -29,9 +29,9 @@
 
 #include <android-base/logging.h>
 #include <android/binder_ibinder_platform.h>
-#include <system/audio_effects/effect_uuid.h>
 #include <system/thread_defs.h>
 
+#include "effect-impl/EffectUUID.h"
 #include "effect-impl/EffectTypes.h"
 #include "effectFactory-impl/EffectFactory.h"
 

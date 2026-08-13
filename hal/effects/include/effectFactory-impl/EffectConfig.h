@@ -30,34 +30,11 @@
 #include <vector>
 
 #include <cutils/properties.h>
-#include <system/audio_effects/effect_uuid.h>
 #include <tinyxml2.h>
 
 #include <aidl/android/hardware/audio/effect/Processing.h>
 #include "effect-impl/EffectTypes.h"
-#include "effect-impl/EffectUUID.h"
 
-using aidl::android::hardware::audio::effect::getEffectTypeUuidAcousticEchoCanceler;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidAutomaticGainControlV1;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidAutomaticGainControlV2;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidBassBoost;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidDownmix;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidDynamicsProcessing;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidEqualizer;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidHapticGenerator;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidLoudnessEnhancer;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidEnvReverb;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidEnvReverb;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidEnvReverb;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidPresetReverb;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidPresetReverb;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidPresetReverb;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidNoiseSuppression;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidSpatializer;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidVirtualizer;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidVisualizer;
-using aidl::android::hardware::audio::effect::getEffectTypeUuidVolume;
-using aidl::android::hardware::audio::effect::getEffectUuidZero;
 using aidl::android::hardware::audio::effect::Processing;
 
 namespace aidl::qti::effects {

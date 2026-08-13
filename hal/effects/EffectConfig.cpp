@@ -23,18 +23,35 @@
 #define LOG_TAG "AHAL_EffectConfigQti"
 #include <android-base/logging.h>
 #include <system/audio_effects/audio_effects_conf.h>
-#include <system/audio_effects/effect_uuid.h>
 #include <optional>
 #include <string>
 
+#include "effect-impl/EffectUUID.h"
+#include "effect-impl/EffectUuidV2Compat.h"
 #include "effectFactory-impl/EffectConfig.h"
 
 using aidl::android::media::audio::common::AudioSource;
 using aidl::android::media::audio::common::AudioStreamType;
 using aidl::android::media::audio::common::AudioUuid;
-using ::aidl::android::hardware::audio::effect::stringToUuid;
 
 namespace aidl::qti::effects {
+
+using v2::getEffectTypeUuidAcousticEchoCanceler;
+using v2::getEffectTypeUuidAutomaticGainControlV1;
+using v2::getEffectTypeUuidAutomaticGainControlV2;
+using v2::getEffectTypeUuidBassBoost;
+using v2::getEffectTypeUuidDownmix;
+using v2::getEffectTypeUuidDynamicsProcessing;
+using v2::getEffectTypeUuidEnvReverb;
+using v2::getEffectTypeUuidEqualizer;
+using v2::getEffectTypeUuidHapticGenerator;
+using v2::getEffectTypeUuidLoudnessEnhancer;
+using v2::getEffectTypeUuidNoiseSuppression;
+using v2::getEffectTypeUuidPresetReverb;
+using v2::getEffectTypeUuidSpatializer;
+using v2::getEffectTypeUuidVirtualizer;
+using v2::getEffectTypeUuidVisualizer;
+using v2::getEffectTypeUuidVolume;
 
 EffectConfig::EffectConfig(const std::string& file) {
     tinyxml2::XMLDocument doc;
@@ -164,23 +181,23 @@ bool EffectConfig::parseLibrary(const tinyxml2::XMLElement& xml, struct Library&
 
     const char* uuidStr = xml.Attribute("uuid");
     RETURN_VALUE_IF(!uuidStr, false, "noUuidAttribute");
-    library.uuid = stringToUuid(uuidStr);
+    library.uuid = v2::parseUuid(uuidStr);
     bool typeSameAsUuid = false;
     if (const char* typeSameAsUuidStr = xml.Attribute("typeSameAsUuid")) {
         typeSameAsUuid = (0 == strcmp(typeSameAsUuidStr, "true"));
     }
 
     if (const char* typeUuidStr = xml.Attribute("type")) {
-        library.type = stringToUuid(typeUuidStr);
+        library.type = v2::parseUuid(typeUuidStr);
         LOG(VERBOSE) << " type specified for " << library.name;
     } else if (typeSameAsUuid) {
         // for vendor effects, type and uuid are generally same, so instead of modifying
         // the XML to add "type", add "typeSameAsUuid" tag, so type will be mapped to uuid
         // However, if type and uuid needs to be different then set type explicitly in
         // the XML file.
-        library.type = stringToUuid(uuidStr);
+        library.type = v2::parseUuid(uuidStr);
     }
-    RETURN_VALUE_IF((library.uuid == getEffectUuidZero()), false, "invalidUuidAttribute");
+    RETURN_VALUE_IF((library.uuid == v2::zeroUuid()), false, "invalidUuidAttribute");
 
     LOG(VERBOSE) << __func__ << (isProxy ? " proxy " : library.name) << " : uuid "
                  << toString(library.uuid)
