@@ -10,7 +10,7 @@ LOCAL_MODULE_OWNER := qti
 
 LOCAL_CLANG             := true
 LOCAL_TIDY              := true
-LOCAL_CFLAGS            += -v -Wall -Wthread-safety
+LOCAL_CFLAGS            += -Wall -Wthread-safety
 
 LOCAL_SRC_FILES:= \
         VolumeListener.cpp \

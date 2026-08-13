@@ -27,24 +27,27 @@ extern "C" void stopEffect(int ioHandle __unused) {}
 
 extern "C" binder_exception_t createEffect(const AudioUuid* in_impl_uuid,
                                            std::shared_ptr<IEffect>* instanceSpp) {
-    if (!in_impl_uuid || *in_impl_uuid != kVisualizerOffloadQtiUUID) {
+    if (!in_impl_uuid || !instanceSpp) {
+        LOG(ERROR) << __func__ << " invalid input parameter";
+        return EX_ILLEGAL_ARGUMENT;
+    }
+    if (*in_impl_uuid != kVisualizerOffloadQtiUUID) {
         LOG(ERROR) << __func__ << " uuid not supported "
                    << aidl::qti::effects::toString(*in_impl_uuid) << " vs "
                    << aidl::qti::effects::toString(kVisualizerOffloadQtiUUID);
         return EX_ILLEGAL_ARGUMENT;
     }
-    if (instanceSpp) {
-        *instanceSpp = ndk::SharedRefBase::make<VisualizerOffload>();
-        LOG(DEBUG) << __func__ << " instance " << instanceSpp->get() << " created";
-        return EX_NONE;
-    } else {
-        LOG(ERROR) << __func__ << " invalid input parameter!";
-        return EX_ILLEGAL_ARGUMENT;
-    }
+    *instanceSpp = ndk::SharedRefBase::make<VisualizerOffload>();
+    LOG(DEBUG) << __func__ << " instance " << instanceSpp->get() << " created";
+    return EX_NONE;
 }
 
 extern "C" binder_exception_t queryEffect(const AudioUuid* in_impl_uuid, Descriptor* _aidl_return) {
-    if (!in_impl_uuid || *in_impl_uuid != kVisualizerOffloadQtiUUID) {
+    if (!in_impl_uuid || !_aidl_return) {
+        LOG(ERROR) << __func__ << " invalid input parameter";
+        return EX_ILLEGAL_ARGUMENT;
+    }
+    if (*in_impl_uuid != kVisualizerOffloadQtiUUID) {
         LOG(ERROR) << __func__ << " uuid not supported "
                    << aidl::qti::effects::toString(*in_impl_uuid) << " vs "
                    << aidl::qti::effects::toString(kVisualizerOffloadQtiUUID);
@@ -61,8 +64,8 @@ const std::vector<Range::VisualizerRange> VisualizerOffload::kRanges = {
         MAKE_RANGE(Visualizer, captureSamples, VisualizerOffloadContext::kMinCaptureBufSize,
                    VisualizerOffloadContext::kMaxCaptureBufSize),
         /* get only parameters, set invalid range (min > max) to indicate not support set */
-        MAKE_RANGE(Visualizer, measurement, Visualizer::Measurement({.peak = 1, .rms = 1}),
-                   Visualizer::Measurement({.peak = 0, .rms = 0})),
+        MAKE_RANGE(Visualizer, measurement, Visualizer::Measurement({.rms = 1, .peak = 1}),
+                   Visualizer::Measurement({.rms = 0, .peak = 0})),
         MAKE_RANGE(Visualizer, captureSampleBuffer, std::vector<uint8_t>({1}),
                    std::vector<uint8_t>({0}))};
 const Capability VisualizerOffload::kCapability = {

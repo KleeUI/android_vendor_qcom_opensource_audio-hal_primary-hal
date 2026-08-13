@@ -33,7 +33,7 @@ using aidl::android::hardware::audio::effect::Virtualizer;
 using aidl::android::hardware::audio::effect::Parameter;
 
 bool isUuidSupported(const AudioUuid* uuid) {
-    return (*uuid == kEqualizerOffloadQtiUUID || *uuid == kBassBoostOffloadQtiUUID ||
+    return uuid && (*uuid == kEqualizerOffloadQtiUUID || *uuid == kBassBoostOffloadQtiUUID ||
             *uuid == kVirtualizerOffloadQtiUUID || *uuid == kAuxEnvReverbOffloadQtiUUID ||
             *uuid == kInsertEnvReverbOffloadQtiUUID || *uuid == kAuxPresetReverbOffloadQtiUUID ||
             *uuid == kInsertPresetReverbOffloadQtiUUID);
@@ -42,18 +42,13 @@ bool isUuidSupported(const AudioUuid* uuid) {
 extern "C" binder_exception_t createEffect(
         const AudioUuid* uuid,
         std::shared_ptr<aidl::android::hardware::audio::effect::IEffect>* instanceSpp) {
-    if (uuid == nullptr || !isUuidSupported(uuid)) {
-        LOG(ERROR) << __func__ << "uuid not supported " << aidl::qti::effects::toString(*uuid);
+    if (!isUuidSupported(uuid) || !instanceSpp) {
+        LOG(ERROR) << __func__ << " invalid input parameter or unsupported uuid";
         return EX_ILLEGAL_ARGUMENT;
     }
-    if (instanceSpp) {
-        *instanceSpp = ndk::SharedRefBase::make<OffloadBundleAidl>(*uuid);
-        LOG(DEBUG) << __func__ << " instance " << instanceSpp->get() << " created";
-        return EX_NONE;
-    } else {
-        LOG(ERROR) << __func__ << " invalid input parameter!";
-        return EX_ILLEGAL_ARGUMENT;
-    }
+    *instanceSpp = ndk::SharedRefBase::make<OffloadBundleAidl>(*uuid);
+    LOG(DEBUG) << __func__ << " instance " << instanceSpp->get() << " created";
+    return EX_NONE;
 }
 
 extern "C" void startEffect(int ioHandle, uint64_t* palHandle) {
@@ -67,9 +62,8 @@ extern "C" void stopEffect(int ioHandle) {
 extern "C" binder_exception_t queryEffect(
         const AudioUuid* in_impl_uuid,
         aidl::android::hardware::audio::effect::Descriptor* _aidl_return) {
-    if (!in_impl_uuid || !isUuidSupported(in_impl_uuid)) {
-        LOG(ERROR) << __func__ << "uuid not supported "
-                   << aidl::qti::effects::toString(*in_impl_uuid);
+    if (!isUuidSupported(in_impl_uuid) || !_aidl_return) {
+        LOG(ERROR) << __func__ << " invalid input parameter or unsupported uuid";
         return EX_ILLEGAL_ARGUMENT;
     }
     if (*in_impl_uuid == kEqualizerOffloadQtiUUID) {

@@ -17,28 +17,23 @@ using aidl::android::media::audio::common::AudioUuid;
 using aidl::qti::effects::VoiceProcessing;
 
 bool isUuidSupported(const AudioUuid* uuid) {
-    return (*uuid == kAcousticEchoCancelerQtiUUID || *uuid == kNoiseSuppressionQtiUUID);
+    return uuid && (*uuid == kAcousticEchoCancelerQtiUUID || *uuid == kNoiseSuppressionQtiUUID);
 }
 
 extern "C" binder_exception_t createEffect(const AudioUuid* uuid,
                                            std::shared_ptr<IEffect>* instanceSpp) {
-    if (!uuid || !isUuidSupported(uuid)) {
-        LOG(ERROR) << __func__ << "uuid not supported";
+    if (!isUuidSupported(uuid) || !instanceSpp) {
+        LOG(ERROR) << __func__ << " invalid input parameter or unsupported uuid";
         return EX_ILLEGAL_ARGUMENT;
     }
-    if (instanceSpp) {
-        *instanceSpp = ndk::SharedRefBase::make<VoiceProcessing>(*uuid);
-        LOG(DEBUG) << __func__ << " instance " << instanceSpp->get() << " created";
-        return EX_NONE;
-    } else {
-        LOG(ERROR) << __func__ << " invalid input parameter!";
-        return EX_ILLEGAL_ARGUMENT;
-    }
+    *instanceSpp = ndk::SharedRefBase::make<VoiceProcessing>(*uuid);
+    LOG(DEBUG) << __func__ << " instance " << instanceSpp->get() << " created";
+    return EX_NONE;
 }
 
 extern "C" binder_exception_t queryEffect(const AudioUuid* uuid, Descriptor* _aidl_return) {
-    if (uuid == nullptr || !isUuidSupported(uuid)) {
-        LOG(ERROR) << __func__ << "uuid not supported";
+    if (!isUuidSupported(uuid) || !_aidl_return) {
+        LOG(ERROR) << __func__ << " invalid input parameter or unsupported uuid";
         return EX_ILLEGAL_ARGUMENT;
     }
     if (*uuid == kAcousticEchoCancelerQtiUUID) {

@@ -25,30 +25,25 @@ using aidl::qti::effects::VolumeListener;
 using aidl::android::media::audio::common::AudioUuid;
 
 bool isUuidSupported(const AudioUuid* uuid) {
-    return (*uuid == kMusicVolumeListenerUUID || *uuid == kRingVolumeListenerUUID ||
+    return uuid && (*uuid == kMusicVolumeListenerUUID || *uuid == kRingVolumeListenerUUID ||
             *uuid == kAlarmVolumeListenerUUID || *uuid == kVoiceCallVolumeListenerUUID ||
             *uuid == kNotificationVolumeListenerUUID);
 }
 
 extern "C" binder_exception_t createEffect(const AudioUuid* uuid,
                                            std::shared_ptr<IEffect>* instanceSpp) {
-    if (uuid == nullptr || !isUuidSupported(uuid)) {
-        LOG(ERROR) << __func__ << "uuid not supported";
+    if (!isUuidSupported(uuid) || !instanceSpp) {
+        LOG(ERROR) << __func__ << " invalid input parameter or unsupported uuid";
         return EX_ILLEGAL_ARGUMENT;
     }
-    if (instanceSpp) {
-        *instanceSpp = ndk::SharedRefBase::make<VolumeListener>(*uuid);
-        LOG(VERBOSE) << __func__ << " instance " << instanceSpp->get() << " created";
-        return EX_NONE;
-    } else {
-        LOG(ERROR) << __func__ << " invalid input parameter!";
-        return EX_ILLEGAL_ARGUMENT;
-    }
+    *instanceSpp = ndk::SharedRefBase::make<VolumeListener>(*uuid);
+    LOG(VERBOSE) << __func__ << " instance " << instanceSpp->get() << " created";
+    return EX_NONE;
 }
 
 extern "C" binder_exception_t queryEffect(const AudioUuid* uuid, Descriptor* _aidl_return) {
-    if (uuid == nullptr || !isUuidSupported(uuid)) {
-        LOG(ERROR) << __func__ << "uuid not supported";
+    if (!isUuidSupported(uuid) || !_aidl_return) {
+        LOG(ERROR) << __func__ << " invalid input parameter or unsupported uuid";
         return EX_ILLEGAL_ARGUMENT;
     }
     if (*uuid == kAlarmVolumeListenerUUID) {
@@ -95,6 +90,7 @@ VolumeListener::VolumeListener(const AudioUuid& uuid) {
 }
 
 ndk::ScopedAStatus VolumeListener::getDescriptor(Descriptor* _aidl_return) {
+    RETURN_IF(!_aidl_return, EX_ILLEGAL_ARGUMENT, "Parameter:nullptr");
     LOG(VERBOSE) << __func__ << (*mDescriptor).toString();
     *_aidl_return = *mDescriptor;
     return ndk::ScopedAStatus::ok();
