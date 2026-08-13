@@ -17,7 +17,8 @@ LOCAL_SRC_FILES := \
 LOCAL_HEADER_LIBRARIES :=  \
     libaudioclient_headers \
     libmedia_helper_headers \
-    libexpectedutils_headers
+    libexpectedutils_headers \
+    libarpal_headers
 
 LOCAL_SHARED_LIBRARIES := \
     libbase \
@@ -44,6 +45,7 @@ include $(BUILD_STATIC_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libhfp_pal
+LOCAL_MULTILIB := 64
 LOCAL_VENDOR_MODULE := true
 
 ifeq ($(TARGET_BOARD_AUTO),true)
@@ -84,6 +86,7 @@ LOCAL_C_INCLUDES := \
 
 LOCAL_HEADER_LIBRARIES += libhardware_headers
 LOCAL_HEADER_LIBRARIES += libsystem_headers
+LOCAL_HEADER_LIBRARIES += libarpal_headers
 include $(BUILD_SHARED_LIBRARY)
 
 #-------------------------------------------
@@ -92,6 +95,7 @@ include $(BUILD_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libfmpal
+LOCAL_MULTILIB := 64
 LOCAL_VENDOR_MODULE := true
 
 LOCAL_SRC_FILES:= FM.cpp
@@ -123,6 +127,7 @@ LOCAL_C_INCLUDES := \
 
 LOCAL_HEADER_LIBRARIES += libhardware_headers
 LOCAL_HEADER_LIBRARIES += libsystem_headers
+LOCAL_HEADER_LIBRARIES += libarpal_headers
 include $(BUILD_SHARED_LIBRARY)
 
 #-------------------------------------------
@@ -160,4 +165,3 @@ LOCAL_SHARED_LIBRARIES := \
 LOCAL_STATIC_LIBRARIES := libhealthhalutils
 
 include $(BUILD_SHARED_LIBRARY)
-

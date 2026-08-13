@@ -2,6 +2,7 @@ LOCAL_PATH := $(call my-dir)
 CURRENT_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 LOCAL_MODULE  := libaudioplatformconverter.qti
+LOCAL_MULTILIB := 64
 LOCAL_MODULE_OWNER  := qti
 LOCAL_MODULE_TAGS   := optional
 LOCAL_VENDOR_MODULE := true
@@ -13,6 +14,9 @@ LOCAL_EXPORT_C_INCLUDE_DIRS   := $(LOCAL_PATH)/include
 
 LOCAL_SRC_FILES := \
     PlatformConverter.cpp
+
+LOCAL_HEADER_LIBRARIES := \
+    libarpal_headers
 
 LOCAL_SHARED_LIBRARIES := \
     libbase \

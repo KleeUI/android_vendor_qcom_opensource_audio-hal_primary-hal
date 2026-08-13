@@ -24,6 +24,9 @@ LOCAL_WHOLE_STATIC_LIBRARIES := libaudio_microphoneinfo_parser
 LOCAL_STATIC_LIBRARIES := \
     libaudiohalutils.qti
 
+LOCAL_HEADER_LIBRARIES := \
+    libarpal_headers
+
 LOCAL_SHARED_LIBRARIES := \
     libbinder_ndk \
     libbase \

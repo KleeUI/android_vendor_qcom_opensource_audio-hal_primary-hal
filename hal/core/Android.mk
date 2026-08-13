@@ -5,6 +5,7 @@ CURRENT_PATH := $(call my-dir)
 include $(CLEAR_VARS)
 
 LOCAL_MODULE            := libaudiocorehal.qti
+LOCAL_MULTILIB          := 64
 LOCAL_VENDOR_MODULE     := true
 LOCAL_MODULE_RELATIVE_PATH := hw
 
@@ -41,7 +42,9 @@ LOCAL_HEADER_LIBRARIES :=  \
     liberror_headers \
     libaudioclient_headers \
     libaudio_system_headers \
-    libmedia_helper_headers
+    libmedia_helper_headers \
+    libaudioeffectsaidlqti_headers \
+    libarpal_headers
 
 
 #    defaults: [
@@ -78,9 +81,8 @@ LOCAL_SHARED_LIBRARIES := \
     android.media.audio.common.types-V3-ndk \
     android.hardware.audio.core-V2-ndk \
     $(LATEST_ANDROID_HARDWARE_AUDIO_EFFECT) \
-    android.hardware.audio.core.sounddose-V1-ndk \
+    android.hardware.audio.core.sounddose-V2-ndk \
     libar-pal \
-    libaudioserviceexampleimpl \
     libaudioplatformconverter.qti \
     qti-audio-types-aidl-V1-ndk \
     libmemunreachable \
