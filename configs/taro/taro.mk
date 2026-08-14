@@ -215,6 +215,7 @@ CONFIG_SKU_OUT_DIR := $(TARGET_COPY_OUT_VENDOR)/etc/audio/sku_$(DEVICE_SKU)
 
 PRODUCT_COPY_FILES += \
     $(CONFIG_HAL_SRC_DIR)/vendor_audio_interfaces.xml:$(TARGET_COPY_OUT_VENDOR)/etc/vendor_audio_interfaces.xml \
+    $(CONFIG_HAL_SRC_DIR)/audio_module_config_primary.xml:$(CONFIG_SKU_OUT_DIR)/audio_module_config_primary.xml \
     $(CONFIG_HAL_SRC_DIR)/audio_effects.conf:$(CONFIG_SKU_OUT_DIR)/audio_effects.conf \
     $(CONFIG_HAL_SRC_DIR)/audio_effects.xml:$(CONFIG_SKU_OUT_DIR)/audio_effects.xml \
     $(CONFIG_HAL_SRC_DIR)/audio_effects_config.xml:$(CONFIG_SKU_OUT_DIR)/audio_effects_config.xml \
