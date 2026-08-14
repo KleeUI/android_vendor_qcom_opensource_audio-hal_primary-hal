@@ -351,6 +351,11 @@ std::unique_ptr<ModuleConfig> Module::initializeConfig() {
 ModuleConfig& Module::getConfig() {
     if (!mConfig) {
         mConfig = std::move(initializeConfig());
+        if (!mConfig) {
+            LOG(ERROR) << __func__
+                       << ": module configuration is unavailable; using an empty configuration";
+            mConfig = std::make_unique<ModuleConfig>();
+        }
     }
     return *mConfig;
 }
