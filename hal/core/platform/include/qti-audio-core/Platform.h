@@ -314,6 +314,7 @@ class Platform {
     bool isHDRARMenabled();
     bool isHDRSPFEnabled();
     bool getUSBCapEnable() { return mUSBCapEnable; }
+    bool isPalReady() const noexcept { return mPalReady; }
     void updateHotwordPortConfig(
         ::aidl::android::media::audio::common::AudioPortConfig& portConfig);
   private:
@@ -374,5 +375,6 @@ class Platform {
     // proxy related info
     size_t mProxyRecordFMQSize{0};
     std::weak_ptr<::aidl::android::hardware::audio::core::ITelephony> mTelephony;
+    bool mPalReady{false};
 };
 } // namespace qti::audio::core

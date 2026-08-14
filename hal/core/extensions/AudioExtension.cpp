@@ -31,7 +31,13 @@ bool BatteryListenerExtension::isCharging;
 
 AudioExtensionBase::AudioExtensionBase(std::string library, bool enabled)
     : mEnabled(enabled), mLibraryName(library) {
-    LOG(INFO) << __func__ << " opening " << mLibraryName.c_str() << " enabled " << enabled;
+    LOG(INFO) << __func__ << " opening " << mLibraryName.c_str() << " enabled " << enabled
+              << " pal_ready " << mPlatform.isPalReady();
+    if (mEnabled && !mPlatform.isPalReady()) {
+        LOG(WARNING) << __func__ << " keeping " << mLibraryName
+                     << " disabled because PAL is unavailable";
+        mEnabled = false;
+    }
     if (mEnabled) {
         mHandle = dlopen(mLibraryName.c_str(), RTLD_LAZY);
         if (mHandle == nullptr) {

@@ -13,6 +13,7 @@
 
 #include <qti-audio-core/Module.h>
 #include <qti-audio-core/ModulePrimary.h>
+#include <qti-audio-core/Platform.h>
 #include <cstdlib>
 #include <ctime>
 
@@ -26,27 +27,38 @@ auto registerBinderAsService = [](auto &&binder, const std::string &serviceName)
     } else {
         LOG(INFO) << __func__ << " successfully registered " << serviceName << " ret:" << status;
     }
+    return status;
 };
 
-void makeIModuleDefaultQti() {
+bool makeIModuleDefaultQti() {
     if (gModuleDefaultQti == nullptr) {
+        auto& platform = ::qti::audio::core::Platform::getInstance();
+        if (!platform.isPalReady()) {
+            LOG(ERROR) << __func__
+                       << " PAL is unavailable; leaving IModule/default to the AOSP fallback";
+            return false;
+        }
         gModuleDefaultQti = ndk::SharedRefBase::make<::qti::audio::core::ModulePrimary>();
     }
+    return true;
 }
 
-void registerIModuleDefaultQti() {
-    makeIModuleDefaultQti();
+int32_t registerIModuleDefaultQti() {
+    if (!makeIModuleDefaultQti()) {
+        return STATUS_NO_INIT;
+    }
     const std::string kServiceName =
             std::string(gModuleDefaultQti->descriptor).append("/").append("default");
-    registerBinderAsService(gModuleDefaultQti->asBinder(), kServiceName);
+    return registerBinderAsService(gModuleDefaultQti->asBinder(), kServiceName);
 }
 
 extern "C" __attribute__((visibility("default"))) int32_t registerServices() {
-    registerIModuleDefaultQti();
-    return STATUS_OK;
+    return registerIModuleDefaultQti();
 }
 
 extern "C" __attribute__((visibility("default"))) void* getIModuleDefaultQti() {
-    makeIModuleDefaultQti();
+    if (!makeIModuleDefaultQti()) {
+        return nullptr;
+    }
     return gModuleDefaultQti.get();
 }

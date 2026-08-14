@@ -7,7 +7,7 @@ SPDX-License-Identifier: Apache-2.0
     <library name="audio-core"
             libraryName="libaudiocorehal.qti.so"
             method="registerServices"
-            mandatory="true" />
+            mandatory="false" />
     <library name="audio-core-default"
             libraryName="libaudiocorehal.default.so"
             method="registerServices"

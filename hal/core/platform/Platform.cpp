@@ -1518,6 +1518,7 @@ Platform::Platform() {
         LOG(ERROR) << __func__ << "pal register global callback failed, ret:" << ret;
         return;
     }
+    mPalReady = true;
     mSndCardStatus = CARD_STATUS_ONLINE;
     LOG(VERBOSE) << __func__ << " pal register global callback successful";
     mOffloadSpeedSupported = property_get_bool("vendor.audio.offload.playspeed", true);
