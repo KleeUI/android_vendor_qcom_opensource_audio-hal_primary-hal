@@ -15,9 +15,9 @@ SPDX-License-Identifier: Apache-2.0
     <library name="audio-effects"
             libraryName="libaudioeffecthal.qti.so"
             method="registerService"
-            mandatory="true" />
+            mandatory="false" />
     <library name="sthal"
             libraryName="libsoundtriggerhal.qti.so"
             method="createISoundTriggerFactory"
-            mandatory="true" />
+            mandatory="false" />
 </libraries>

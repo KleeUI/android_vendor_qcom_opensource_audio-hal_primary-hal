@@ -77,6 +77,11 @@ extern "C" __attribute__((visibility("default"))) int32_t registerServices() {
                                                         configIntfName.c_str());
     if (status != STATUS_OK) {
         LOG(ERROR) << "failed to register service for \"" << configIntfName << "\"";
+        // IConfig is the entry point used by audioserver to construct
+        // AudioFlinger.  Do not report a successful plugin load when this
+        // registration failed: the outer loader can retry transient failures
+        // and will keep the precise binder status in its diagnostics.
+        return status;
     }
     gModuleConfigs = gAudioPolicyConverter.releaseModuleConfigs();
 

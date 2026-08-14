@@ -7,6 +7,7 @@
 #define LOG_TAG "AHAL_Service_QTI"
 
 #include <dlfcn.h>
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
 
@@ -31,11 +32,18 @@
 static bool registerServiceImplementation(const Interface& interface) {
     auto libraryName = interface.libraryName;
     auto interfaceMethod = interface.method;
+    fprintf(stderr, "KleeAudioLoader: loading %s from %s via %s (mandatory=%d)\n",
+            interface.name.c_str(), libraryName.c_str(), interfaceMethod.c_str(),
+            interface.mandatory);
+    fflush(stderr);
     void* handle = dlopen(libraryName.c_str(), RTLD_LAZY);
     if (handle == nullptr) {
         const char* error = dlerror();
         ALOGE("Failed to dlopen %s: %s", libraryName.c_str(),
               error != nullptr ? error : "unknown error");
+        fprintf(stderr, "KleeAudioLoader: dlopen failed for %s: %s\n", libraryName.c_str(),
+                error != nullptr ? error : "unknown error");
+        fflush(stderr);
         return false;
     }
     auto instantiate =
@@ -44,10 +52,17 @@ static bool registerServiceImplementation(const Interface& interface) {
         const char* error = dlerror();
         ALOGE("Factory function %s not found in libName %s: %s", interfaceMethod.c_str(),
               libraryName.c_str(), error != nullptr ? error : "unknown error");
+        fprintf(stderr, "KleeAudioLoader: dlsym failed for %s in %s: %s\n",
+                interfaceMethod.c_str(), libraryName.c_str(),
+                error != nullptr ? error : "unknown error");
+        fflush(stderr);
         dlclose(handle);
         return false;
     }
-    return (instantiate() == STATUS_OK);
+    const binder_status_t status = instantiate();
+    fprintf(stderr, "KleeAudioLoader: %s returned %d\n", interface.name.c_str(), status);
+    fflush(stderr);
+    return status == STATUS_OK;
 }
 
 void registerInterfaces(const Interfaces& interfaces) {
@@ -60,6 +75,9 @@ void registerInterfaces(const Interfaces& interfaces) {
             while (retryCount < REGISTER_RETRY_COUNT) {
                 ALOGI("failed to register service: %s, retry count: %d",
                         interface.toString().c_str(), retryCount + 1);
+                fprintf(stderr, "KleeAudioLoader: retrying %s (%d/%d)\n",
+                        interface.name.c_str(), retryCount + 1, REGISTER_RETRY_COUNT);
+                fflush(stderr);
                 isRegistered = registerServiceImplementation(interface);
                 if (isRegistered) {
                     ALOGI("successfully registered %s", interface.toString().c_str());
@@ -69,6 +87,11 @@ void registerInterfaces(const Interfaces& interfaces) {
                     sleep(SLEEP_TIME_SECONDS);
                 }
                 ++retryCount;
+            }
+            if (!isRegistered) {
+                fprintf(stderr, "KleeAudioLoader: mandatory interface %s exhausted retries\n",
+                        interface.name.c_str());
+                fflush(stderr);
             }
             LOG_ALWAYS_FATAL_IF(!isRegistered, "failed to register %s ",
                                 interface.toString().c_str());
