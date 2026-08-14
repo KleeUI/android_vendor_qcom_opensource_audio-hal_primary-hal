@@ -44,16 +44,20 @@ MM_AUDIO += libbatterylistener
 MM_AUDIO += audioflacapp
 MM_AUDIO += liblx-osal
 
-#AOSP effects
+# The taro host registers QTI's frozen Effect V2 factory. The AOSP software
+# implementations in this platform tree use Effect V4 and cannot be loaded by
+# that factory; do not install an unused, ABI-incompatible duplicate set.
+ifneq ($(TARGET_BOARD_PLATFORM),taro)
+# AOSP effects
 MM_AUDIO += libbundleaidl
 MM_AUDIO += libdownmixaidl
 MM_AUDIO += libdynamicsprocessingaidl
-
 MM_AUDIO += libloudnessenhanceraidl
 MM_AUDIO += libreverbaidl
 MM_AUDIO += libvisualizeraidl
+endif
 
-#QTI effects
+# QTI effects
 MM_AUDIO += libvolumelistener
 MM_AUDIO += libqcompostprocbundle
 MM_AUDIO += libqcomvisualizer
