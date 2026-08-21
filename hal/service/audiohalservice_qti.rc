@@ -14,7 +14,6 @@ service vendor.audio-hal-aidl /vendor/bin/hw/audiohalservice.qti
     interface aidl android.hardware.audio.core.IModule/usb
     interface aidl android.hardware.audio.effect.IFactory/default
     interface aidl android.hardware.soundtrigger3.ISoundTriggerHw/default
-    stdio_to_kmsg
     onrestart restart audioserver
 
 # SSR trigger for audio subsystem
