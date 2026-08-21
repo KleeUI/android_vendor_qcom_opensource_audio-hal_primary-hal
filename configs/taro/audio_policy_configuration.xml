@@ -90,6 +90,7 @@ IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <item>Telephony Tx</item>
                 <item>Built-In Mic</item>
                 <item>Built-In Back Mic</item>
+                <item>FM</item>
                 <item>FM Tuner</item>
                 <item>Telephony Rx</item>
                 <item>Echo Reference</item>
