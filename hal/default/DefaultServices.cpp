@@ -7,6 +7,7 @@
 
 #include <android-base/logging.h>
 #include <android-base/properties.h>
+#include <android/binder_auto_utils.h>
 #include <android/binder_ibinder_platform.h>
 #include <android/binder_manager.h>
 #include <android/binder_process.h>
@@ -87,15 +88,21 @@ extern "C" __attribute__((visibility("default"))) int32_t registerServices() {
 
     // check if IModule/default is registered or not
     const std::string serviceName = std::string(AospModule::descriptor).append("/").append("default");
-    AIBinder* binder = AServiceManager_checkService(serviceName.c_str());
-    bool registerStubAsDefault = false;
-    if (binder == nullptr) {
+    ndk::SpAIBinder existingDefault{
+            AServiceManager_checkService(serviceName.c_str())};
+    const bool defaultAlreadyRegistered = existingDefault.get() != nullptr;
+    bool registerStubAsDefault = !defaultAlreadyRegistered;
+    if (!defaultAlreadyRegistered) {
         LOG(INFO) <<"IModule/default is not registered yet";
-        registerStubAsDefault = true;
     }
     for (AospModuleConfigurationPair &configPair : *gModuleConfigs) {
         std::string name = configPair.first;
         if (name == "default") {
+            if (defaultAlreadyRegistered) {
+                LOG(INFO) << "keeping the existing IModule/default; "
+                             "skipping the AOSP primary module";
+                continue;
+            }
             registerStubAsDefault = false;
         } else if (name == "stub") {
             if (registerStubAsDefault) {
