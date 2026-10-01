@@ -16,7 +16,7 @@ cc_library_static {
     header_libs: [
         "libxsdc-utils",
         "libaudio_system_headers",
-        "libarpal_headers",
+        "//vendor/qcom/opensource/pal:libarpal_headers",
     ],
     generated_headers: ["libaudio_microphone_info"],
     generated_sources: ["libaudio_microphone_info"],
@@ -28,4 +28,3 @@ cc_library_static {
         "-Wthread-safety",
     ],
 }
-
